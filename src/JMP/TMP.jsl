@@ -1,0 +1,3 @@
+//!
+include("C:/Users/joslaton/Documents/Python Scripts/DigCharGUI/JMP/Digital Char Process-Jon.jsl");
+x=interior_funct("C:/Users/joslaton/Documents/dist/AKELA_ES4_char_Parametrics_Analysis.xlsx", "C:/Users/joslaton/Documents/dist/AKELA_ES4_char_Report.pptx");

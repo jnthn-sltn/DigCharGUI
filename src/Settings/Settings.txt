@@ -1,0 +1,3 @@
+JMP Location;C:/Program Files/SAS/JMP/13/jmp.exe
+Derate;7.2
+Template;C:/Users/joslaton/Documents/Python Scripts/DigCharGUI/Templates/TEMPLATE_DPA_1p8V_Copy.xlsx

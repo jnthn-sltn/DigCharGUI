@@ -1,0 +1,74 @@
+﻿//!
+interior_funct = Function( {dFile, outfile},
+	//dFile = Pick File( "Please Select Data File With JMP Format Spreadsheet" );
+	dFileName = Word( 1, Word( -1, dFile, "/" ), "." );
+	rFileName = outfile;
+	dt = Open( dFile, Worksheets( "JMP Format" ) );
+
+
+// Delete Empty Columns
+
+	For( i = N Col( dt ), i >= 1, i--,
+		If( (Col N Missing( Column( i ) ) / N Row()) == 1,
+			dt << delete columns( i )
+		)
+	);
+
+
+	colNames = dt << Get Column Names( "String" );
+
+	pptInit = 1;
+
+	For( i = 1, i <= N Items( colNames ), i++, 
+
+		If(
+			Contains( colNames[i], "DUT" ) | Contains( colNames[i], "Temp" ) |
+			Contains( colNames[i], "VIO (V)" ),
+			, 
+	
+			vc = Variability Chart(
+				Y( colNames[i] ),
+				X( :Temperature, :Name( "VIO (V)" ) ),
+				Max Iter( 100 ),
+				Conv Limit( 0.00000001 ),
+				Number Integration Abscissas( 128 ),
+				Number Function Evals( 65536 ),
+				Analysis Type( "Choose best analysis (EMS REML Bayesian)" ),
+				Std Dev Chart( 0 )
+	
+			);
+		
+			If(
+				pptInit,
+					vc << Save Presentation( rFileName );
+					pptInit = 0;,
+				vc << Save Presentation( rFileName, Append ),
+			);
+		
+			vc << close window;
+
+			vc = Graph Builder(
+				Variables(
+					X( :DUT ),
+					Y( colNames[i] ),
+					Group X( :Temperature ),
+					Group Y( :Name( "VIO (V)" ) )
+				),
+				Elements( Points( X, Y, Legend( 12 ) ) )
+			);
+		
+			vc << Save Presentation( rFileName, Append );
+		
+			vc << close window;
+		)
+	);
+
+	Close( dt, nosave );
+
+	message = " DONE - Report File In C:Temp ";
+
+	Beep();
+	Caption( message );
+	Quit();
+
+);
